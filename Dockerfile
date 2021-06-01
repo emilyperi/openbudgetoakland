@@ -7,7 +7,7 @@ RUN adduser -D openbudget
 ENV HOME /home/openbudget
 
 # Copy contents of current directory to openbudget/repo in container
-COPY . $HOME/repo/
+COPY . $HOME
 
 # Set user of /home/node directory to be node (who we just created)
 RUN chown -R openbudget $HOME
@@ -16,10 +16,22 @@ RUN chown -R openbudget $HOME
 WORKDIR $HOME
 
 # Update apk
-
+RUN \ 
+	apk update  && \
+	apk upgrade && \
+	apk add bash && \
+	apk add vim && \
+	apk add git
 
 # Save website files thatt have been changed
-VOLUME ["$HOME/repo"]
+VOLUME ["$HOME"]
 
+# Install yarn globally per openbudget instructions
+RUN npm install -g harp
 
+# Change User
+USER openbudget
+
+# Default command
+CMD ["/bin/bash"]
 
